@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vite RPG Game</title>
+  </head>
+  <body>
+    <style>
+      @font-face {
+        font-family: monogram;
+        src: url(monogram.ttf);
+      }
+
+      body {
+        font-family: monogram, monospace;
+        font-size: 2rem;
+        overflow: hidden;
+      }
+
+      #app {
+        width: 100%;
+        height: 100%;
+        position: relative;
+      }
+
+      #textbox {
+        position: absolute;
+        left: 10%;
+        right: 10%;
+        bottom: 2vh;
+        min-height: 10vh;
+        background: white;
+        border-radius: 3px;
+        outline-style: solid;
+        padding: 1rem;
+        display: flex;
+        flex-direction: column;
+        flex-wrap: wrap;
+        justify-content: flex-start;
+        align-items: flex-start;
+        word-spacing: 0.2rem;
+        filter: drop-shadow(0 0 0.75rem rgb(112, 112, 112));
+      }
+
+      .ui-text {
+        margin: 0;
+        user-select: none;
+      }
+
+      .ui-close-btn {
+        font-family: monogram, monospace;
+        border-style: none;
+        border-radius: 3px;
+        padding: 1rem;
+        font-size: inherit;
+      }
+
+      .btn-container {
+        align-self: flex-end;
+        margin-top: 1rem;
+      }
+
+      .note {
+        position: absolute;
+        left: 5%;
+        top: 1vh;
+        display: flex;
+        flex-direction: column;
+        color: rgb(238, 238, 238);
+      }
+
+      /* Code Editor UI */
+      #editor-container {
+        position: absolute;
+        left: 10%;
+        right: 10%;
+        top: 20vh;
+        background: white;
+        border-radius: 3px;
+        padding: 1rem;
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        filter: drop-shadow(0 0 0.75rem rgb(112, 112, 112));
+      }
+
+      #code-input {
+        width: 100%;
+        height: 150px;
+        font-size: 1.5rem;
+        font-family: monospace;
+      }
+
+      #language-select {
+        font-size: 1.5rem;
+        margin-bottom: 10px;
+      }
+    </style>
+
+    <div id="app">
+      <div>
+        <p class="note">Tap/Click to move</p>
+
+        <div id="textbox-container" style="display: none">
+          <div id="textbox">
+            <p id="dialogue" class="ui-text"></p>
+            <div class="btn-container">
+              <button id="close" class="ui-close-btn">Close</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Code Editor UI -->
+        <div id="editor-container">
+          <p id="challenge-text" class="ui-text"></p>
+
+          <!-- Language Selection -->
+          <label for="language-select">Choose Language:</label>
+          <select id="language-select">
+            <option value="javascript">JavaScript</option>
+            <option value="python">Python</option>
+            <option value="cpp">C++</option>
+          </select>
+
+          <!-- Code Input -->
+          <textarea id="code-input" placeholder="Write your code here..."></textarea>
+
+          <!-- Action Buttons -->
+          <button id="submit-code" class="ui-close-btn">Submit</button>
+          <button id="close-editor" class="ui-close-btn">Close</button>
+
+          <!-- Output Message -->
+          <p id="code-output" class="ui-text"></p>
+        </div>
+      </div>
+      <canvas id="game"></canvas>
+    </div>
+    <script type="module" src="src/main.js"></script>
+    <script>
+      document.getElementById("close-editor").addEventListener("click", () => {
+        document.getElementById("editor-container").style.display = "none";
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,271 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Campus Quest Login</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Press Start 2P', cursive;
+            background: url('bg1.png') no-repeat center center/cover;
+            image-rendering: pixelated;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 20px;
+            border: 4px solid black;
+            border-radius: 10px;
+            text-align: center;
+            max-width: 350px;
+            box-shadow: 5px 5px black;
+            image-rendering: pixelated;
+        }
+        h1 {
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+        input {
+            width: calc(100% - 24px);
+            padding: 10px;
+            border: 2px solid black;
+            margin-bottom: 10px;
+            font-size: 12px;
+            image-rendering: pixelated;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid black;
+            cursor: pointer;
+            font-size: 12px;
+            image-rendering: pixelated;
+            font-family: 'Press Start 2P', cursive;
+            letter-spacing: 1px;
+            transition: background 0.2s;
+        }
+        button:hover {
+            background: darkgray;
+        }
+        .primary-btn {
+            background: blue;
+            color: white;
+        }
+        .secondary-btn {
+            background: lightgray;
+            margin-top: 10px;
+        }
+        .info-panel, .creator-panel {
+            position: absolute;
+            top: 50%;
+            width: 300px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 20px;
+            border: 4px solid black;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 5px 5px black;
+            transform: translateY(-50%);
+            transition: all 0.3s ease-in-out;
+            image-rendering: pixelated;
+        }
+        .info-panel {
+            right: -350px;
+        }
+        .info-panel.show {
+            right: 20px;
+        }
+        .creator-panel {
+            left: -350px;
+        }
+        .creator-panel.show {
+            left: 20px;
+        }
+        .info-btn {
+            background: green;
+            color: white;
+            margin-top: 10px;
+        }
+        .creator-btn {
+            background: purple;
+            color: white;
+            margin-top: 10px;
+        }
+    </style>
+
+        <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
+
+    <script>
+    // Your web app's Firebase configuration
+    const firebaseConfig = {
+        apiKey: "AIzaSyBvKjfxmHlxWoU5WA5t70qUqwBcfPDH_Pg",
+        authDomain: "campusquest2025.firebaseapp.com",
+        databaseURL: "https://campusquest2025-default-rtdb.asia-southeast1.firebasedatabase.app",
+        projectId: "campusquest2025",
+        storageBucket: "campusquest2025.firebasestorage.app",
+        messagingSenderId: "1050671255008",
+        appId: "1:1050671255008:web:bc35a7377d07fe8ba2ef85"
+    };
+    
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    </script>
+
+</head>
+<body>
+    <div class="container">
+        <h1>CAMPUS QUEST</h1>
+        <label>USERNAME</label>
+        <input type="text" id="username" placeholder="Enter username">
+        <label>PASSWORD</label>
+        <input type="password" id="password" placeholder="Enter password">
+        <div id="confirm-password-container" style="display: none;">
+            <label>CONFIRM PASSWORD</label>
+            <input type="password" id="confirm-password">
+        </div>
+        <button class="primary-btn" id="action-btn">START GAME</button>
+        <button class="secondary-btn" id="toggle-btn">NEW PLAYER</button>
+        <button class="info-btn" id="info-btn">ABOUT GAME</button>
+        <button class="creator-btn" id="creator-btn">ABOUT CREATORS</button>
+    </div>
+    
+    <div class="info-panel" id="info-panel">
+        <h2>ABOUT CAMPUS QUEST</h2>
+        <p>A pixelated RPG where players navigate a university campus, solve coding challenges, and interact with NPCs!</p>
+    </div>
+
+    <div class="creator-panel" id="creator-panel">
+        <h2>ABOUT CREATORS</h2>
+        <p>Developed by passionate programmers who love pixel art and interactive learning!</p>
+    </div>
+
+    <script>
+  // Firebase references
+  const auth = firebase.auth();
+  const database = firebase.database();
+
+  // Handle login/signup toggle
+  let isLogin = true;
+  document.getElementById('toggle-btn').addEventListener('click', function () {
+    isLogin = !isLogin;
+    document.getElementById('confirm-password-container').style.display = isLogin ? 'none' : 'block';
+    document.getElementById('action-btn').textContent = isLogin ? 'START GAME' : 'CREATE ACCOUNT';
+    document.getElementById('toggle-btn').textContent = isLogin ? 'NEW PLAYER' : 'BACK';
+  });
+
+  // Info and creator panels toggle
+  document.getElementById('info-btn').addEventListener('click', function () {
+    document.getElementById('info-panel').classList.toggle('show');
+  });
+
+  document.getElementById('creator-btn').addEventListener('click', function () {
+    document.getElementById('creator-panel').classList.toggle('show');
+  });
+
+  // Handle the main action button (login or signup)
+  let action_btn = document.getElementById('action-btn');
+  action_btn.addEventListener('click', function() {
+    let username = document.getElementById('username').value;
+    let password = document.getElementById('password').value;
+    
+    if (!username || !password) {
+      alert("Please fill in all fields!");
+      return;
+    }
+    
+    if (isLogin) {
+      // Login mode - Firebase Authentication
+      auth.signInWithEmailAndPassword(username + "@campusquest.com", password)
+        .then((userCredential) => {
+          // Redirect to dashboard
+          window.location.href = "dashboard.html";
+        })
+        .catch((error) => {
+          alert("Login failed: " + error.message);
+        });
+    } else {
+      // Signup mode
+      let confirmPassword = document.getElementById('confirm-password').value;
+      
+      // Basic validation
+      if (password !== confirmPassword) {
+        alert("Passwords don't match!");
+        return;
+      }
+      
+      if (password.length < 6) {
+        alert("Password must be at least 6 characters!");
+        return;
+      }
+      
+      // Create account with Firebase
+      auth.createUserWithEmailAndPassword(username + "@campusquest.com", password)
+        .then((userCredential) => {
+          // Get user ID
+          const userId = userCredential.user.uid;
+          
+          // Save additional user data
+          return database.ref('users/' + userId).set({
+            username: username,
+            createdAt: firebase.database.ServerValue.TIMESTAMP,
+            gameProgress: 0
+          });
+        })
+        .then(() => {
+          alert("Account created successfully!");
+          
+          // Switch back to login mode
+          isLogin = true;
+          document.getElementById('confirm-password-container').style.display = 'none';
+          document.getElementById('action-btn').textContent = 'START GAME';
+          document.getElementById('toggle-btn').textContent = 'NEW PLAYER';
+          document.getElementById('password').value = '';
+        })
+        .catch((error) => {
+          alert("Signup failed: " + error.message);
+        });
+    }
+  });
+
+  // Check if user is already logged in
+  auth.onAuthStateChanged(function(user) {
+    if (user) {
+      // User is signed in, redirect to dashboard
+      window.location.href = "dashboard.html";
+    }
+  });
+
+  // Create test account for development
+  function addTestAccount() {
+    auth.createUserWithEmailAndPassword("player@campusquest.com", "123456")
+      .then((userCredential) => {
+        return database.ref('users/' + userCredential.user.uid).set({
+          username: "player",
+          createdAt: firebase.database.ServerValue.TIMESTAMP,
+          gameProgress: 0
+        });
+      })
+      .catch((error) => {
+        // If account already exists, ignore error
+        console.log("Test account setup:", error.message);
+      });
+  }
+
+  // Uncomment this line once to create test account, then comment it again
+  // addTestAccount();
+</script>
+
+
+</body>
+</html>
